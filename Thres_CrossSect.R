@@ -5,6 +5,9 @@ Thres_CrossSect <- function(dataset, p, bts=2000, alpha=0.025, weighted=FALSE, r
   # alpha: alpha level for confidence intervals (two sided)
   # weighted: logical value to indicate use of weighted methods, if false then all missing immune response values are removed from data
   # rnd_digits: number of digits to round results to
+
+  # Note: Data needs to be of columns in following order: 
+  #  1) Obs. immune response (S) 2) Disease status
   
   ## Check for valid arguments
   if(any(p==0)&weighted==TRUE){stop("For 0 risk level, only unweighted methods are implemented")}
@@ -31,8 +34,7 @@ Thres_CrossSect <- function(dataset, p, bts=2000, alpha=0.025, weighted=FALSE, r
     1/term
   }
   
-  ## Sorting data matrix.  Data needs to be of columns in following order: 
-  #  1) Obs. immune response (S) 2) Disease status
+  ## Sorting data matrix.  
   Wghts <- unlist(lapply(dataset$Y, IPW))
   datawghted <- cbind(dataset[,-c(3)], Wghts*dataset[,3])
   vaccases <- sum(datawghted$Y)

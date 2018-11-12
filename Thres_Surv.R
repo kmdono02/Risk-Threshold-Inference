@@ -7,6 +7,9 @@ Thres_Surv <- function(dataset, p, bts=2000, alpha=0.025, weighted=FALSE, includ
   # weighted: logical value to indicate use of weighted methods, if false then all missing immune response values are removed from data
   # include_naive: logical value to calculate nonparametric estimator which ignors right censoring
   # rnd_digits: number of digits to round results to
+
+  # Data needs to be of columns in following order: 
+  # 1) Obs. immune response (S) 2) Observed survival time 3) Censor Status (=1 if right censored)
   
   ## Check for valid arguments
   if(any(p<0) | any(p>1)){stop("Risk levels p all need to be between 0 and 1")}
@@ -33,9 +36,7 @@ Thres_Surv <- function(dataset, p, bts=2000, alpha=0.025, weighted=FALSE, includ
     1/term
   }
   
-  ## Sorting data matrix.  Data needs to be of columns in following order: 
-  #  1) Obs. immune response (S) 2) Observed survival time 3) Censor Status (=1 if right censored)
-
+  ## Sorting data matrix. 
   # Creating Y, Applying weights based on Y, datacomp is set of subjects with complete info
   Y <- 1-dataset[,3]
   Wghts <- unlist(lapply(Y, IPW))
