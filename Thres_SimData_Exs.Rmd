@@ -1,0 +1,118 @@
+---
+title: 'Threshold of Risk Inference: Examples with Simulated Data'
+author: "Kevin Donovan"
+date: "November 9, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_packages, include=FALSE}
+library(tidyverse)
+library(plotrix) # used to plot confidence intervals and estimates using function plotCI
+```
+
+# Cross-sectional Data
+## Positive risk levels
+Let's consider the scenario where inference on risk thresholds is done with cross-sectional data collected at a single time point (as detailed in Sections 2 and 3 of the paper).  Let $Y$ denote disease status ($Y=1$ denoting disease, $Y=1$ denoting no disease) and $S$ denote immune response.  Suppose $S$ is observed for proportion $p_0$ of subjects with $Y=0$ and proportion $p_1$ of subjects with $Y=1$.  In the following simulated examples, sample size $n=12,500$ where $S$ is generated from a gamma distribution with mean and variance 4 and $Y|S$ is generated from a Bernoulli distribution with $\Pr(Y=1|S)=$exbit$(\beta_0+\beta_1S)$.  The slope $\beta_1$ was set to -5 and $\beta_0$ was determined based on the chosen disease risk $\Pr(Y=1)$; in the following simulations risks of 0.01 and 0.1 were used with $p_0=0.2$ and $p_1=1$.  The R function sim_data_logistic found in the GitHub repository simulates data under this model (based on choosen values of $n, \beta_1, t_0$, $p_0$, $p_1$, and disease risk).  
+
+For disease risk 0.01, point estimates and 95$\%$ confidence intervals are computed of thresholds for risk levels 0.001, 0.003, 0.005, 0.007, and 0.009 and for disease risk 0.1, point estimates and 95$\%$ confidence intervals are computed of thresholds for risk levels 0.009, 0.01, 0.03, 0.05, 0.07, and 0.09.  The confidence intervals are computed using 2000 bootstrap resamples.  These calculations were done using the R function Thres_Surv, whose source code can be found in the GitHub repository, which implements the methods detailed for Section 4 for inference with time to event data.  These estimates and confidence intervals were computed using $\hat{v}_c^{w}$ as defined in Section 3 of the paper.  For each threshold, the point estimate and confidence interval using $\hat{v}_c^{w}$ are plotted with the corresponding risk level on x axis; the point estimate is colored red and the true threshold is colored blue.
+
+The true thresholds under the model from which the data were simulated (models detailed previously) are also provided (function sim_data_logit calculates these for vector of choosen risk levels).
+
+```{r cross_sec_logit}
+source("sim_data_logit.R")
+source("Thres_CrossSect.R")
+
+## Low risk example
+sim_data <- Sim_data_logit(Risk = 0.01, n=12500, p=c(0.001,0.003,0.005,0.007,0.009), p0=0.2, p1=1, seed_val = 012)
+
+vac_data_analysis_LR <- sim_data$simmed_data %>% select(S_obs, Y) 
+low_risk_cross_sec_results <- Thres_CrossSect(dataset = vac_data_analysis_LR, p=c(0.001,0.003,0.005,0.007,0.009), weighted=TRUE, bts=2000)
+low_risk_cross_sec_results
+
+# Now plot
+plotCI(x=low_risk_cross_sec_results$Risk_Level, y=low_risk_cross_sec_results$Est, 
+       ui=low_risk_cross_sec_results$CI_UL,li=low_risk_cross_sec_results$CI_LL, xlab="Risk Level", ylab="Threshold Estimate", col="red",scol="black", main="Threshold of risk inference on simulated data: disease risk=0.01\nCross sectional scenario", ylim=c(0.25, 1.75))
+points(x=as.numeric(names(sim_data$true_thresholds)), y=sim_data$true_thresholds, col="blue")
+
+## Medium risk example
+sim_data <- Sim_data_logit(Risk = 0.1, n=12500, p=c(0.009, 0.01, 0.03, 0.05, 0.07, 0.09), p0=0.2, p1=1, seed_val = 012)
+
+vac_data_analysis_MR <- sim_data$simmed_data %>% select(S_obs, Y) 
+med_risk_cross_sec_results <- Thres_CrossSect(dataset = vac_data_analysis_MR, p=c(0.009, 0.01, 0.03, 0.05, 0.07, 0.09), weighted=TRUE, bts=2000)
+med_risk_cross_sec_results
+
+# Now plot
+plotCI(x=med_risk_cross_sec_results$Risk_Level, y=med_risk_cross_sec_results$Est, 
+       ui=med_risk_cross_sec_results$CI_UL, li=med_risk_cross_sec_results$CI_LL, xlab="Risk Level",
+       ylab="Threshold Estimate",col="red",scol="black", main="Threshold of risk inference on simulated data: disease risk=0.1\nTime to event scenario")
+points(x=as.numeric(names(sim_data$true_thresholds)), y=sim_data$true_thresholds, col="blue", sub="Cross sectional scenario")
+```
+
+## Zero risk level
+For the cross sectional data scenario, suppose $\Pr(Y=1|S)=$exbit$(\beta_0+\beta_1S)$ for $S<v_0$ and $\Pr(Y=1|S)=0$ otherwise (as described in Section 2 of the paper).  In the following simulated corss-sectional examples, everything else with the previous cross-sectional simulations is unchanged.  The R function sim_data_logit found in the GitHub repository simulates data under this model using the argument **theta** (denotes the value of $v_0$ to simulate data under).  The nonparametric estimator $\tilde{v}_0$ is computed, with the corresponding bootstrap confidence intervals as detailed in Section 2 of the paper.
+
+The two simulated datasets used in the following examples, one simulated under a 0.01 disease risk and the other under 0.10 disease risk with $v_0$=2 for both scenarios, using the function sim_data_logit provided in the GitHub repository.
+
+```{r cross_sec_zero_logit}
+source("sim_data_logit.R")
+source("Thres_CrossSect.R")
+
+## Low risk example
+sim_data <- Sim_data_logit(Risk = 0.01, n=12500, theta=2, p0=1, p1=1, p=0, seed_val = 012)
+
+vac_data_analysis_LR <- sim_data$simmed_data %>% select(S_obs, Y) 
+low_risk_cross_sec_results <- Thres_CrossSect(dataset = vac_data_analysis_LR, p=0, weighted=FALSE, bts=2000)
+low_risk_cross_sec_results
+
+## Medium risk example
+sim_data <- Sim_data_logit(Risk = 0.1, n=12500, theta=2, p0=0.2, p1=1, p=0,seed_val = 012)
+
+vac_data_analysis_MR <- sim_data$simmed_data %>% select(S_obs, Y) 
+med_risk_cross_sec_results <- Thres_CrossSect(dataset = vac_data_analysis_MR, p=0, weighted=FALSE, bts=2000)
+med_risk_cross_sec_results
+```
+
+# Time to Event Data
+Now, let's consider the scenario where inference on risk thresholds is done with time to event data (as described in Section 4 of the paper).  Let time $t_0$ denote end of follow-up ($t_0>0$), $T$ denote survival time, $S$ denote immune response, $C$ denote censoring status ($C=1$ denoting right censoring at or before time $t_0$, and $C=0$ denoting observed disease before time $t_0$).  Suppose $S$ is observed for proportion $p_0$ of subjects with $C=1$ and proportion $p_1$ of subjects with $C=0$.  In the following simulated examples, sample size $n=12,500$ where $S$ is generated from a gamma distribution with mean and variance 4 and $T|S$ is generated by log$(T)=\beta_0+\beta_1S+\epsilon$ where $\epsilon$ is generated from a logistic distribution.  The slope $\beta_1$ sas set to 2 and $\beta_0$ was determined based on the chosen disease risk $\Pr(T<t_0)$; in the following simulations risks of 0.01 and 0.1 were used with $p_0=0.2$ and $p_1=1$.  The R function sim_data_logistic found in the GitHub repository simulates data under this model (based on choosen values of $n, \beta_1, t_0$, $p_0$, $p_1$, and disease risk).  
+
+For disease risk 0.01, point estimates and 95$\%$ confidence intervals are computed of thresholds for risk levels 0.001, 0.003, 0.005, 0.007, and 0.009 and for disease risk 0.1, point estimates and 95$\%$ confidence intervals are computed of thresholds for risk levels 0.009, 0.01, 0.03, 0.05, 0.07, and 0.09.  The confidence intervals are computed using 2000 bootstrap resamples.  These calculations were done using the R function Thres_Surv, whose source code can be found in the GitHub repository, which implements the methods detailed for Section 4 for inference with time to event data.  These estimates and confidence intervals were computed using $\hat{v}_c^{w}$ (referred to as the "naive" method in the R function Thres_Surv) and $\hat{v}_c^{wk}$ ("adjusted" method), as defined in Section 4 of the paper.  For each threshold, the point estimate and confidence interval using $\hat{v}_c^{wk}$ are plotted with the corresponding risk level on x axis; the point estimate is colored red and the true threshold is colored blue.
+
+The true thresholds under the model from which the data were simulated (models detailed previously) are also provided (function sim_data_logistic calculates these for vector of choosen risk levels).
+
+```{r time_to_event_logistic}
+source("sim_data_logistic.R")
+source("Thres_Surv.R")
+
+## Low risk example
+sim_data <- Sim_data_logistic(Risk = 0.01, n=12500, p=c(0.001,0.003,0.005,0.007,0.009), p0=0.2, p1=1, seed_val = 012)
+
+vac_data_analysis_LR <- sim_data$simmed_data %>% select(S_obs, TObs, Cstatus) 
+low_risk_tte_results <- Thres_Surv(dataset = vac_data_analysis_LR, p=c(0.001,0.003,0.005,0.007,0.009), weighted=TRUE, bts=2000)
+low_risk_tte_results
+adjusted_results_low <- low_risk_tte_results %>% filter(Method=="Adjusted")
+
+# Now plot
+plotCI(x=adjusted_results_low$Risk_Level, y=adjusted_results_low$Est, 
+       ui=adjusted_results_low$CI_UL,li=adjusted_results_low$CI_LL, xlab="Risk Level", ylab="Threshold Estimate",
+       col="red",scol="black", main="Threshold of risk inference on simulated data: disease risk=0.01\nTime to event scenario")
+points(x=as.numeric(names(sim_data$true_thresholds)), y=sim_data$true_thresholds, col="blue")
+
+## Medium risk example
+sim_data <- Sim_data_logistic(Risk = 0.1, n=12500, p=c(0.009, 0.01, 0.03, 0.05, 0.07, 0.09), p0=0.2, p1=1, seed_val = 012)
+
+vac_data_analysis_MR <- sim_data$simmed_data %>% select(S_obs, TObs, Cstatus) 
+med_risk_tte_results <- Thres_Surv(dataset = vac_data_analysis_MR, p=c(0.009, 0.01, 0.03, 0.05, 0.07, 0.09), 
+                                   weighted=TRUE, bts=2000)
+med_risk_tte_results
+adjusted_results_med <- med_risk_tte_results %>% filter(Method=="Adjusted")
+
+# Now plot
+plotCI(x=adjusted_results_med$Risk_Level, y=adjusted_results_med$Est, 
+       ui=adjusted_results_med$CI_UL, li=adjusted_results_med$CI_LL, xlab="Risk Level", ylab="Threshold Estimate",col="red",scol="black", main="Threshold of risk inference on simulated data: disease risk=0.1\nTime to event scenario")
+points(x=as.numeric(names(sim_data$true_thresholds)), y=sim_data$true_thresholds, col="blue", sub="Time to event scenario")
+
+```
