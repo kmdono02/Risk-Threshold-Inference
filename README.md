@@ -1,4 +1,4 @@
-Nonparametric inference for immune response thresholds of risk
+Nonparametric inference for immune response risk thresholds
 ======
 
 This repository includes source code for R functions which implement the nonparametric methods for inference on risk thresholds detailed 
