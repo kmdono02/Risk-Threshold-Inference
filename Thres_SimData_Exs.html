@@ -11,6 +11,7 @@
 
 <meta name="author" content="Kevin Donovan" />
 
+<meta name="date" content="2019-06-13" />
 
 <title>Threshold of Risk Inference: Examples with Simulated Data</title>
 
@@ -97,6 +98,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -104,14 +108,74 @@ button.code-folding-btn:focus {
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -123,11 +187,14 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Threshold of Risk Inference: Examples with Simulated Data</h1>
 <h4 class="author"><em>Kevin Donovan</em></h4>
-<h4 class="date"><em>June 13, 2019</em></h4>
+<h4 class="date"><em>April 22, 2019</em></h4>
 
 </div>
 
 
+<p>The repository found at</p>
+<p><a href="https://github.com/kmdono02/Risk_Threshold" class="uri">https://github.com/kmdono02/Risk_Threshold</a></p>
+<p>includes source code for R functions which implement the nonparametric methods for inference on risk thresholds detailed in “Nonparametric inference for immune response thresholds of risk in vaccine studies” by Donovan, Hudgens, and Gilbert (2018). Below, some examples of these methods are illustrated using simulated data.</p>
 <div id="cross-sectional-data" class="section level1">
 <h1>Cross-sectional Data</h1>
 <div id="positive-risk-levels" class="section level2">
@@ -135,8 +202,8 @@ $(document).ready(function () {
 <p>Let’s consider the scenario where inference on risk thresholds is done with cross-sectional data collected at a single time point (as detailed in Sections 2 and 3 of the paper). Let <span class="math inline">\(Y\)</span> denote disease status (<span class="math inline">\(Y=1\)</span> denoting disease, <span class="math inline">\(Y=1\)</span> denoting no disease) and <span class="math inline">\(S\)</span> denote immune response. Suppose <span class="math inline">\(S\)</span> is observed for proportion <span class="math inline">\(p_0\)</span> of subjects with <span class="math inline">\(Y=0\)</span> and proportion <span class="math inline">\(p_1\)</span> of subjects with <span class="math inline">\(Y=1\)</span>. In the following simulated examples, sample size <span class="math inline">\(n=12,500\)</span> where <span class="math inline">\(S\)</span> is generated from a gamma distribution with mean and variance 4 and <span class="math inline">\(Y|S\)</span> is generated from a Bernoulli distribution with <span class="math inline">\(\Pr(Y=1|S)=\)</span>exbit<span class="math inline">\((\beta_0+\beta_1S)\)</span>. The slope <span class="math inline">\(\beta_1\)</span> was set to -5 and <span class="math inline">\(\beta_0\)</span> was determined based on the chosen disease risk <span class="math inline">\(\Pr(Y=1)\)</span>; in the following simulations risks of 0.01 and 0.1 were used with <span class="math inline">\(p_0=0.2\)</span> and <span class="math inline">\(p_1=1\)</span>. The R function sim_data_logistic found in the GitHub repository simulates data under this model (based on choosen values of <span class="math inline">\(n, \beta_1, t_0\)</span>, <span class="math inline">\(p_0\)</span>, <span class="math inline">\(p_1\)</span>, and disease risk).</p>
 <p>For disease risk 0.01, point estimates and 95<span class="math inline">\(\%\)</span> confidence intervals are computed of thresholds for risk levels 0.001, 0.003, 0.005, 0.007, and 0.009 and for disease risk 0.1, point estimates and 95<span class="math inline">\(\%\)</span> confidence intervals are computed of thresholds for risk levels 0.009, 0.01, 0.03, 0.05, 0.07, and 0.09. The confidence intervals are computed using 2000 bootstrap resamples. These calculations were done using the R function Thres_Surv, whose source code can be found in the GitHub repository, which implements the methods detailed for Section 4 for inference with time to event data. These estimates and confidence intervals were computed using <span class="math inline">\(\hat{v}_c^{w}\)</span> as defined in Section 3 of the paper. For each threshold, the point estimate and confidence interval using <span class="math inline">\(\hat{v}_c^{w}\)</span> are plotted with the corresponding risk level on x axis; the point estimate is colored red and the true threshold is colored blue.</p>
 <p>The true thresholds under the model from which the data were simulated (models detailed previously) are also provided (function sim_data_logit calculates these for vector of choosen risk levels).</p>
-<pre class="r"><code>source(&quot;sim_data_logit.R&quot;)
-source(&quot;Thres_CrossSect.R&quot;)
+<pre class="r"><code>source(&quot;../sim_data_logit.R&quot;)
+source(&quot;../Thres_CrossSect.R&quot;)
 
 ## Low risk example
 sim_data &lt;- Sim_data_logit(Risk = 0.01, n=12500, p=c(0.001,0.003,0.005,0.007,0.009), p0=0.2, p1=1, seed_val = 012)
@@ -179,8 +246,8 @@ points(x=as.numeric(names(sim_data$true_thresholds)), y=sim_data$true_thresholds
 <h2>Zero risk level</h2>
 <p>For the cross sectional data scenario, suppose <span class="math inline">\(\Pr(Y=1|S)=\)</span>exbit<span class="math inline">\((\beta_0+\beta_1S)\)</span> for <span class="math inline">\(S&lt;v_0\)</span> and <span class="math inline">\(\Pr(Y=1|S)=0\)</span> otherwise (as described in Section 2 of the paper). In the following simulated corss-sectional examples, everything else with the previous cross-sectional simulations is unchanged. The R function sim_data_logit found in the GitHub repository simulates data under this model using the argument <strong>theta</strong> (denotes the value of <span class="math inline">\(v_0\)</span> to simulate data under). The nonparametric estimator <span class="math inline">\(\tilde{v}_0\)</span> is computed, with the corresponding bootstrap confidence intervals as detailed in Section 2 of the paper.</p>
 <p>The two simulated datasets used in the following examples, one simulated under a 0.01 disease risk and the other under 0.10 disease risk with <span class="math inline">\(v_0\)</span>=2 for both scenarios, using the function sim_data_logit provided in the GitHub repository.</p>
-<pre class="r"><code>source(&quot;sim_data_logit.R&quot;)
-source(&quot;Thres_CrossSect.R&quot;)
+<pre class="r"><code>source(&quot;../sim_data_logit.R&quot;)
+source(&quot;../Thres_CrossSect.R&quot;)
 
 ## Low risk example
 sim_data &lt;- Sim_data_logit(Risk = 0.01, n=12500, theta=2, p0=1, p1=1, p=0, seed_val = 012)
@@ -205,8 +272,8 @@ med_risk_cross_sec_results</code></pre>
 <p>Now, let’s consider the scenario where inference on risk thresholds is done with time to event data (as described in Section 4 of the paper). Let time <span class="math inline">\(t_0\)</span> denote end of follow-up (<span class="math inline">\(t_0&gt;0\)</span>), <span class="math inline">\(T\)</span> denote survival time, <span class="math inline">\(S\)</span> denote immune response, <span class="math inline">\(C\)</span> denote censoring status (<span class="math inline">\(C=1\)</span> denoting right censoring at or before time <span class="math inline">\(t_0\)</span>, and <span class="math inline">\(C=0\)</span> denoting observed disease before time <span class="math inline">\(t_0\)</span>). Suppose <span class="math inline">\(S\)</span> is observed for proportion <span class="math inline">\(p_0\)</span> of subjects with <span class="math inline">\(C=1\)</span> and proportion <span class="math inline">\(p_1\)</span> of subjects with <span class="math inline">\(C=0\)</span>. In the following simulated examples, sample size <span class="math inline">\(n=12,500\)</span> where <span class="math inline">\(S\)</span> is generated from a gamma distribution with mean and variance 4 and <span class="math inline">\(T|S\)</span> is generated by log<span class="math inline">\((T)=\beta_0+\beta_1S+\epsilon\)</span> where <span class="math inline">\(\epsilon\)</span> is generated from a logistic distribution. The slope <span class="math inline">\(\beta_1\)</span> sas set to 2 and <span class="math inline">\(\beta_0\)</span> was determined based on the chosen disease risk <span class="math inline">\(\Pr(T&lt;t_0)\)</span>; in the following simulations risks of 0.01 and 0.1 were used with <span class="math inline">\(p_0=0.2\)</span> and <span class="math inline">\(p_1=1\)</span>. The R function sim_data_logistic found in the GitHub repository simulates data under this model (based on choosen values of <span class="math inline">\(n, \beta_1, t_0\)</span>, <span class="math inline">\(p_0\)</span>, <span class="math inline">\(p_1\)</span>, and disease risk).</p>
 <p>For disease risk 0.01, point estimates and 95<span class="math inline">\(\%\)</span> confidence intervals are computed of thresholds for risk levels 0.001, 0.003, 0.005, 0.007, and 0.009 and for disease risk 0.1, point estimates and 95<span class="math inline">\(\%\)</span> confidence intervals are computed of thresholds for risk levels 0.009, 0.01, 0.03, 0.05, 0.07, and 0.09. The confidence intervals are computed using 2000 bootstrap resamples. These calculations were done using the R function Thres_Surv, whose source code can be found in the GitHub repository, which implements the methods detailed for Section 4 for inference with time to event data. These estimates and confidence intervals were computed using <span class="math inline">\(\hat{v}_c^{w}\)</span> (referred to as the “naive” method in the R function Thres_Surv) and <span class="math inline">\(\hat{v}_c^{wk}\)</span> (“adjusted” method), as defined in Section 4 of the paper. For each threshold, the point estimate and confidence interval using <span class="math inline">\(\hat{v}_c^{wk}\)</span> are plotted with the corresponding risk level on x axis; the point estimate is colored red and the true threshold is colored blue.</p>
 <p>The true thresholds under the model from which the data were simulated (models detailed previously) are also provided (function sim_data_logistic calculates these for vector of choosen risk levels).</p>
-<pre class="r"><code>source(&quot;sim_data_logistic.R&quot;)
-source(&quot;Thres_Surv.R&quot;)
+<pre class="r"><code>source(&quot;../sim_data_logistic.R&quot;)
+source(&quot;../Thres_Surv.R&quot;)
 
 ## Low risk example
 sim_data &lt;- Sim_data_logistic(Risk = 0.01, n=12500, p=c(0.001,0.003,0.005,0.007,0.009), p0=0.2, p1=1, seed_val = 012)
