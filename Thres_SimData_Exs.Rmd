@@ -1,9 +1,16 @@
 ---
 title: 'Threshold of Risk Inference: Examples with Simulated Data'
 author: "Kevin Donovan"
-date: "June 13, 2019"
+date: June 13, 2019
 output: html_document
 ---
+
+The repository found at
+
+https://github.com/kmdono02/Risk_Threshold
+
+includes source code for R functions which implement the nonparametric methods for inference on risk thresholds detailed 
+in "Nonparametric inference for immune response thresholds of risk in vaccine studies" by Donovan, Hudgens, and Gilbert (2018).  Below, some examples of these methods are illustrated using simulated data.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -23,11 +30,9 @@ For disease risk 0.01, point estimates and 95$\%$ confidence intervals are compu
 The true thresholds under the model from which the data were simulated (models detailed previously) are also provided (function sim_data_logit calculates these for vector of choosen risk levels).
 
 ```{r cross_sec_logit}
-source("sim_data_logit.R")
-source("Thres_CrossSect.R")
+source("../sim_data_logit.R")
+source("../Thres_CrossSect.R")
 
-## Low risk example
-sim_data <- Sim_data_logit(Risk = 0.01, n=12500, p=c(0.001,0.003,0.005,0.007,0.009), p0=0.2, p1=1, seed_val = 012)
 
 vac_data_analysis_LR <- sim_data$simmed_data %>% select(S_obs, Y) 
 low_risk_cross_sec_results <- Thres_CrossSect(dataset = vac_data_analysis_LR, p=c(0.001,0.003,0.005,0.007,0.009), weighted=TRUE, bts=2000)
