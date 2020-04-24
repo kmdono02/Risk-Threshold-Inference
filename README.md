@@ -2,7 +2,7 @@ Nonparametric inference for thresholds of risk
 ======
 
 This repository includes source code for R functions which implement the nonparametric methods for inference on risk thresholds detailed 
-in [Nonparametric inference for immune response thresholds of risk in vaccine studies](https://www.ncbi.nlm.nih.gov/pubmed/31285781) by Donovan, Hudgens, and Gilbert (2019).  An example analysis using these methods on simulated datasets can be found [here](https://kmdono02.github.io/Risk_Threshold/) 
+in [Nonparametric inference for immune response thresholds of risk in vaccine studies](https://www.ncbi.nlm.nih.gov/pubmed/31285781) by Donovan, Hudgens, and Gilbert (2019).  An example analysis using these methods on simulated datasets can be found [here](https://kmdono02.github.io/Risk_Threshold/).
 
 The files are summarized below:
 
