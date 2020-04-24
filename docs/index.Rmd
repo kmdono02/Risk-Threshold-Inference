@@ -1,7 +1,7 @@
 ---
 title: 'Threshold of Risk Inference: Examples with Simulated Data'
 author: "Kevin Donovan"
-date: June 13, 2019
+date: `r format(Sys.time(), "%d %B, %Y")`
 output: html_document
 ---
 
