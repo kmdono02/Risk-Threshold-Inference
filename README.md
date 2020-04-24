@@ -14,7 +14,7 @@ The files are summarized below:
 
 3) Thres_CrossSect.R : R source code for function which implements nonparametric estimator (weighted and unweighted) for cross-sectional data at a single time point (Sections 2 and 3 in paper)
 
-4) Thres_CrossSect.R : R source code for function which implements nonparametric estimator (weighted and unweighted) for time to event data (Section 4 in paper)
+4) Thres_Surv.R : R source code for function which implements nonparametric estimator (weighted and unweighted) for time to event data (Section 4 in paper)
 
 * Note: These functions require the dataset to be in a specific format; see source code for details
 
