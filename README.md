@@ -18,7 +18,7 @@ The files are summarized below:
 
 * Note: These functions require the dataset to be in a specific format; see source code for details
 
-5) sim_data_logit.R : R source code for function to simulate dataset under a logit model for cross-sectional data; used with examples in document Thres_SimData_Exs.html
+5) sim_data_logit.R : R source code for function to simulate dataset under a logit model for cross-sectional data; used with examples in document index.html
 
 6) sim_data_logistic.R : R source code for function to simulate dataset under a logitistic model for cross-sectional data; used with 
-                         examples in document Thres_SimData_Exs.html
+                         examples in document index.html
