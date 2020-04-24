@@ -6,9 +6,11 @@ in [Nonparametric inference for immune response thresholds of risk in vaccine st
 
 The files are summarized below:
 
-1) Thres_SimData_Exs.html : HTML document illustrating use of these methods using simulated datasets (see website above)
+1) index.html : HTML document illustrating use of these methods using simulated datasets (see website above)
 
-2) Thres_SimData_Exs.Rmd: R markdown file from which Thres_SimData_Exs.html was created
+2) index.Rmd: R markdown file from which Thres_SimData_Exs.html was created
+
+* Note: Files 1) and 2) are found in the **\docs** subfolder
 
 3) Thres_CrossSect.R : R source code for function which implements nonparametric estimator (weighted and unweighted) for cross-sectional data at a single time point (Sections 2 and 3 in paper)
 
